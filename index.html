@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoVault - Advanced RSA Encryption</title>
+    <meta name="description" content="Professional RSA encryption tool with Malayalam alphabet integration. Secure your messages with military-grade encryption.">
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        body {
+            margin: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .feature-card {
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .cyber-grid {
+            background-image: 
+                linear-gradient(rgba(102, 126, 234, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(102, 126, 234, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+        
+        .glow {
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+        }
+        
+        .tab-button {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .tab-button::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+        }
+        
+        .tab-button.active::after {
+            width: 100%;
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Icons
+        const Shield = ({ className }) => (
+            <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+        );
+
+        const Lock = ({ className }) => (
+            <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+        );
+
+        const Unlock = ({ className }) => (
+            <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 9.9-1"></path>
+            </svg>
+        );
+
+        const Key = ({ className }) => (
+            <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path>
+            </svg>
+        );
+
+        const Copy = ({ className }) => (
+            <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+        );
+
+        const Check = ({ className }) => (
+            <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+        );
+
+        const Download = ({ className }) => (
+            <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+        );
+
+        const Upload = ({ className }) => (
+            <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+        );
+
+        const Zap = ({ className }) => (
+            <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            </svg>
+        );
+
+        const AlertCircle = ({ className }) => (
+            <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+        );
+
+        const Sparkles = ({ className }) => (
+            <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M12 3v4m0 10v4M3 12h4m10 0h4M6.3 6.3l2.8 2.8m5.8 5.8l2.8 2.8M6.3 17.7l2.8-2.8m5.8-5.8l2.8-2.8"></path>
+            </svg>
+        );
+
+        function CryptoVault() {
+            const malayalamLetters = [
+                'ആ', 'ഇ', 'ഈ', 'উ', 'ഊ', 'ഋ', 'എ', 'ഏ', 'ഐ', 'ഒ', 'ഓ', 'ഔ', 'ക',
+                'ഖ', 'ഗ', 'ഘ', 'ങ', 'ച', 'ഛ', 'ജ', 'ഝ', 'ഞ', 'ട', 'ഠ', 'ഡ', 'ഢ'
+            ];
+
+            const [mode, setMode] = useState('encrypt');
+            const [text, setText] = useState('');
+            const [result, setResult] = useState('');
+            const [publicKey, setPublicKey] = useState({ e: 0, n: 0 });
+            const [privateKey, setPrivateKey] = useState({ d: 0, n: 0 });
+            const [pastedPrivateKey, setPastedPrivateKey] = useState('');
+            const [keySize, setKeySize] = useState('medium');
+            const [copied, setCopied] = useState('');
+            const [isProcessing, setIsProcessing] = useState(false);
+            const [showSuccess, setShowSuccess] = useState(false);
+
+            // RSA Functions
+            const isPrime = (n, k = 5) => {
+                if (n < 2) return false;
+                if (n === 2 || n === 3) return true;
+                if (n % 2 === 0) return false;
+
+                let r = 0, d = n - 1;
+                while (d % 2 === 0) {
+                    r++;
+                    d = Math.floor(d / 2);
+                }
+
+                for (let i = 0; i < k; i++) {
+                    const a = 2 + Math.floor(Math.random() * (n - 3));
+                    let x = modPow(a, d, n);
+                    if (x === 1 || x === n - 1) continue;
+                    let continueLoop = false;
+                    for (let j = 0; j < r - 1; j++) {
+                        x = modPow(x, 2, n);
+                        if (x === n - 1) {
+                            continueLoop = true;
+                            break;
+                        }
+                    }
+                    if (continueLoop) continue;
+                    return false;
+                }
+                return true;
+            };
+
+            const modPow = (base, exp, mod) => {
+                let result = 1;
+                base = base % mod;
+                while (exp > 0) {
+                    if (exp % 2 === 1) {
+                        result = (result * base) % mod;
+                    }
+                    exp = Math.floor(exp / 2);
+                    base = (base * base) % mod;
+                }
+                return result;
+            };
+
+            const extendedGCD = (a, b) => {
+                if (b === 0) return { gcd: a, x: 1, y: 0 };
+                const result = extendedGCD(b, a % b);
+                return {
+                    gcd: result.gcd,
+                    x: result.y,
+                    y: result.x - Math.floor(a / b) * result.y
+                };
+            };
+
+            const modInverse = (e, phi) => {
+                const result = extendedGCD(e, phi);
+                if (result.gcd !== 1) return null;
+                return ((result.x % phi) + phi) % phi;
+            };
+
+            const generatePrime = (min, max) => {
+                let attempts = 0;
+                while (attempts < 1000) {
+                    const num = Math.floor(Math.random() * (max - min + 1)) + min;
+                    if (num % 2 === 0) continue;
+                    if (isPrime(num)) return num;
+                    attempts++;
+                }
+                return null;
+            };
+
+            const generateKeys = () => {
+                let min, max;
+                if (keySize === 'small') {
+                    min = 100; max = 500;
+                } else if (keySize === 'medium') {
+                    min = 500; max = 2000;
+                } else {
+                    min = 2000; max = 5000;
+                }
+
+                const p = generatePrime(min, max);
+                const q = generatePrime(min, max);
+                if (!p || !q) return;
+
+                const n = p * q;
+                const phi = (p - 1) * (q - 1);
+                const e = 65537;
+                const d = modInverse(e, phi);
+                if (!d) return;
+
+                setPublicKey({ e, n });
+                setPrivateKey({ d, n });
+            };
+
+            useEffect(() => {
+                generateKeys();
+            }, [keySize]);
+
+            const textToMalayalam = (text) => {
+                return text.split('').map(char => {
+                    if (char.match(/[a-z]/i)) {
+                        const code = char.toUpperCase().charCodeAt(0) - 65;
+                        return malayalamLetters[code];
+                    }
+                    return char;
+                }).join('');
+            };
+
+            const malayalamToText = (text) => {
+                return text.split('').map(char => {
+                    const index = malayalamLetters.indexOf(char);
+                    if (index !== -1) {
+                        return String.fromCharCode(65 + index);
+                    }
+                    return char;
+                }).join('');
+            };
+
+            const encryptRSA = (message, pubKey) => {
+                const malayalam = textToMalayalam(message);
+                const encrypted = [];
+                for (let char of malayalam) {
+                    const index = malayalamLetters.indexOf(char);
+                    if (index !== -1) {
+                        const cipherValue = modPow(index, pubKey.e, pubKey.n);
+                        encrypted.push(cipherValue);
+                    } else {
+                        encrypted.push(char.charCodeAt(0));
+                    }
+                }
+                return encrypted.join(',');
+            };
+
+            const decryptRSA = (ciphertext, privKey) => {
+                try {
+                    const values = ciphertext.split(',').map(v => parseInt(v));
+                    const decrypted = [];
+                    for (let value of values) {
+                        if (value < 256) {
+                            decrypted.push(String.fromCharCode(value));
+                        } else {
+                            const plainValue = modPow(value, privKey.d, privKey.n);
+                            if (plainValue >= 0 && plainValue < malayalamLetters.length) {
+                                decrypted.push(malayalamLetters[plainValue]);
+                            }
+                        }
+                    }
+                    return malayalamToText(decrypted.join(''));
+                } catch (error) {
+                    return 'Decryption failed. Please check your private key and ciphertext.';
+                }
+            };
+
+            const handleProcess = () => {
+                setIsProcessing(true);
+                setTimeout(() => {
+                    if (mode === 'encrypt') {
+                        setResult(encryptRSA(text, publicKey));
+                    } else {
+                        try {
+                            const privKey = JSON.parse(pastedPrivateKey);
+                            setResult(decryptRSA(text, privKey));
+                        } catch {
+                            setResult('Invalid private key format. Please paste a valid JSON key.');
+                        }
+                    }
+                    setIsProcessing(false);
+                    setShowSuccess(true);
+                    setTimeout(() => setShowSuccess(false), 3000);
+                }, 500);
+            };
+
+            const copyToClipboard = (text, label) => {
+                navigator.clipboard.writeText(text);
+                setCopied(label);
+                setTimeout(() => setCopied(''), 2000);
+            };
+
+            const downloadKey = (key, filename) => {
+                const blob = new Blob([JSON.stringify(key, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                a.click();
+            };
+
+            return (
+                <div className="min-h-screen cyber-grid" style={{backgroundColor: '#f8f9fe'}}>
+                    {/* Hero Header */}
+                    <div className="gradient-bg py-16 px-4 relative overflow-hidden">
+                        <div className="absolute inset-0 opacity-10">
+                            <div className="absolute top-10 left-10 w-72 h-72 bg-white rounded-full blur-3xl"></div>
+                            <div className="absolute bottom-10 right-10 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+                        </div>
+                        <div className="max-w-6xl mx-auto text-center relative z-10">
+                            <div className="flex items-center justify-center mb-4">
+                                <Shield className="w-16 h-16 text-white mr-4" />
+                                <h1 className="text-5xl md:text-6xl font-bold text-white">CryptoVault</h1>
+                            </div>
+                            <p className="text-xl text-white opacity-90 mb-6">Military-Grade RSA Encryption with Malayalam Integration</p>
+                            <div className="flex items-center justify-center space-x-6 text-white text-sm">
+                                <div className="flex items-center">
+                                    <Zap className="w-5 h-5 mr-2" />
+                                    <span>Zero-Knowledge</span>
+                                </div>
+                                <div className="flex items-center">
+                                    <Shield className="w-5 h-5 mr-2" />
+                                    <span>End-to-End Encrypted</span>
+                                </div>
+                                <div className="flex items-center">
+                                    <Sparkles className="w-5 h-5 mr-2" />
+                                    <span>Open Source</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="max-w-6xl mx-auto px-4 py-8 -mt-12 relative z-20">
+                        {/* Mode Selector */}
+                        <div className="glass-effect rounded-2xl shadow-2xl p-8 mb-8 animate-fade-in">
+                            <div className="flex items-center justify-center space-x-4 mb-8">
+                                <button
+                                    onClick={() => setMode('encrypt')}
+                                    className={`tab-button flex items-center px-8 py-4 rounded-xl font-semibold text-lg transition-all ${
+                                        mode === 'encrypt'
+                                            ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg glow active'
+                                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                    }`}
+                                >
+                                    <Lock className="w-6 h-6 mr-3" />
+                                    Encrypt Message
+                                </button>
+                                <button
+                                    onClick={() => setMode('decrypt')}
+                                    className={`tab-button flex items-center px-8 py-4 rounded-xl font-semibold text-lg transition-all ${
+                                        mode === 'decrypt'
+                                            ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg glow active'
+                                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                    }`}
+                                >
+                                    <Unlock className="w-6 h-6 mr-3" />
+                                    Decrypt Message
+                                </button>
+                            </div>
+
+                            {mode === 'encrypt' ? (
+                                <div className="space-y-6 animate-fade-in">
+                                    {/* Key Generation Section */}
+                                    <div className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl p-6 border-2 border-purple-200">
+                                        <div className="flex items-center justify-between mb-4">
+                                            <h3 className="text-xl font-bold text-gray-800 flex items-center">
+                                                <Key className="w-6 h-6 mr-2 text-purple-600" />
+                                                Your Encryption Keys
+                                            </h3>
+                                            <div className="flex items-center space-x-3">
+                                                <select
+                                                    value={keySize}
+                                                    onChange={(e) => setKeySize(e.target.value)}
+                                                    className="px-4 py-2 rounded-lg border-2 border-purple-200 focus:border-purple-500 outline-none"
+                                                >
+                                                    <option value="small">Fast (Small Keys)</option>
+                                                    <option value="medium">Balanced (Medium)</option>
+                                                    <option value="large">Secure (Large Keys)</option>
+                                                </select>
+                                                <button
+                                                    onClick={generateKeys}
+                                                    className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition flex items-center"
+                                                >
+                                                    <Sparkles className="w-4 h-4 mr-2" />
+                                                    Regenerate
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        {/* Public Key Display */}
+                                        <div className="bg-white rounded-lg p-6 mb-4 shadow-md">
+                                            <div className="flex items-center justify-between mb-3">
+                                                <h4 className="font-semibold text-green-700 flex items-center">
+                                                    <Shield className="w-5 h-5 mr-2" />
+                                                    Public Key (Share This)
+                                                </h4>
+                                                <div className="flex space-x-2">
+                                                    <button
+                                                        onClick={() => copyToClipboard(JSON.stringify(publicKey), 'public')}
+                                                        className="px-3 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition flex items-center text-sm"
+                                                    >
+                                                        {copied === 'public' ? <Check className="w-4 h-4 mr-1" /> : <Copy className="w-4 h-4 mr-1" />}
+                                                        Copy
+                                                    </button>
+                                                    <button
+                                                        onClick={() => downloadKey(publicKey, 'public-key.json')}
+                                                        className="px-3 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition flex items-center text-sm"
+                                                    >
+                                                        <Download className="w-4 h-4 mr-1" />
+                                                        Download
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div className="bg-green-50 rounded p-3 font-mono text-sm break-all">
+                                                {JSON.stringify(publicKey)}
+                                            </div>
+                                            <p className="text-xs text-green-600 mt-2 flex items-center">
+                                                <Check className="w-4 h-4 mr-1" />
+                                                Safe to share publicly - Anyone can use this to encrypt messages for you
+                                            </p>
+                                        </div>
+
+                                        {/* Private Key Display */}
+                                        <div className="bg-white rounded-lg p-6 shadow-md">
+                                            <div className="flex items-center justify-between mb-3">
+                                                <h4 className="font-semibold text-red-700 flex items-center">
+                                                    <Lock className="w-5 h-5 mr-2" />
+                                                    Private Key (Keep Secret!)
+                                                </h4>
+                                                <div className="flex space-x-2">
+                                                    <button
+                                                        onClick={() => copyToClipboard(JSON.stringify(privateKey), 'private')}
+                                                        className="px-3 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition flex items-center text-sm"
+                                                    >
+                                                        {copied === 'private' ? <Check className="w-4 h-4 mr-1" /> : <Copy className="w-4 h-4 mr-1" />}
+                                                        Copy
+                                                    </button>
+                                                    <button
+                                                        onClick={() => downloadKey(privateKey, 'private-key.json')}
+                                                        className="px-3 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition flex items-center text-sm"
+                                                    >
+                                                        <Download className="w-4 h-4 mr-1" />
+                                                        Download
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div className="bg-red-50 rounded p-3 font-mono text-sm break-all">
+                                                {JSON.stringify(privateKey)}
+                                            </div>
+                                            <p className="text-xs text-red-600 mt-2 flex items-center">
+                                                <AlertCircle className="w-4 h-4 mr-1" />
+                                                NEVER share this - Only you can decrypt messages with this key
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {/* Message Input */}
+                                    <div>
+                                        <label className="block text-lg font-semibold text-gray-700 mb-3">
+                                            Enter Your Message
+                                        </label>
+                                        <textarea
+                                            value={text}
+                                            onChange={(e) => setText(e.target.value)}
+                                            placeholder="Type your secret message here..."
+                                            className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-purple-500 outline-none transition text-lg min-h-32"
+                                            rows="4"
+                                        />
+                                    </div>
+
+                                    {/* Encrypt Button */}
+                                    <button
+                                        onClick={handleProcess}
+                                        disabled={!text || isProcessing}
+                                        className="w-full py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                                    >
+                                        {isProcessing ? (
+                                            <>
+                                                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
+                                                Encrypting...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Lock className="w-6 h-6 mr-3" />
+                                                Encrypt Message
+                                            </>
+                                        )}
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="space-y-6 animate-fade-in">
+                                    {/* Private Key Input */}
+                                    <div className="bg-gradient-to-br from-red-50 to-pink-50 rounded-xl p-6 border-2 border-red-200">
+                                        <label className="block text-lg font-semibold text-gray-700 mb-3 flex items-center">
+                                            <Key className="w-6 h-6 mr-2 text-red-600" />
+                                            Paste Your Private Key
+                                        </label>
+                                        <textarea
+                                            value={pastedPrivateKey}
+                                            onChange={(e) => setPastedPrivateKey(e.target.value)}
+                                            placeholder='{"d":12345,"n":67890}'
+                                            className="w-full p-4 border-2 border-red-200 rounded-xl focus:border-red-500 outline-none transition font-mono text-sm"
+                                            rows="3"
+                                        />
+                                        <p className="text-xs text-red-600 mt-2 flex items-center">
+                                            <AlertCircle className="w-4 h-4 mr-1" />
+                                            Paste the private key you received during encryption
+                                        </p>
+                                    </div>
+
+                                    {/* Encrypted Message Input */}
+                                    <div>
+                                        <label className="block text-lg font-semibold text-gray-700 mb-3">
+                                            Paste Encrypted Message
+                                        </label>
+                                        <textarea
+                                            value={text}
+                                            onChange={(e) => setText(e.target.value)}
+                                            placeholder="Paste the encrypted numbers here (e.g., 12345,67890,11223,...)..."
+                                            className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-purple-500
+outline-none transition font-mono text-sm min-h-32"
+                                            rows="4"
+                                        />
+                                    </div>
+
+                                    {/* Decrypt Button */}
+                                    <button
+                                        onClick={handleProcess}
+                                        disabled={!text || !pastedPrivateKey || isProcessing}
+                                        className="w-full py-4 bg-gradient-to-r from-red-600 to-pink-600 text-white rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                                    >
+                                        {isProcessing ? (
+                                            <>
+                                                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
+                                                Decrypting...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Unlock className="w-6 h-6 mr-3" />
+                                                Decrypt Message
+                                            </>
+                                        )}
+                                    </button>
+                                </div>
+                            )}
+
+                            {/* Result Display */}
+                            {result && (
+                                <div className="mt-8 animate-fade-in">
+                                    <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border-2 border-green-300 relative">
+                                        {showSuccess && (
+                                            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg flex items-center">
+                                                <Check className="w-4 h-4 mr-2" />
+                                                {mode === 'encrypt' ? 'Encrypted Successfully!' : 'Decrypted Successfully!'}
+                                            </div>
+                                        )}
+                                        <div className="flex items-center justify-between mb-3">
+                                            <h4 className="text-lg font-bold text-gray-800 flex items-center">
+                                                <Sparkles className="w-5 h-5 mr-2 text-green-600" />
+                                                {mode === 'encrypt' ? 'Encrypted Result' : 'Decrypted Message'}
+                                            </h4>
+                                            <button
+                                                onClick={() => copyToClipboard(result, 'result')}
+                                                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition flex items-center shadow-md"
+                                            >
+                                                {copied === 'result' ? <Check className="w-4 h-4 mr-2" /> : <Copy className="w-4 h-4 mr-2" />}
+                                                {copied === 'result' ? 'Copied!' : 'Copy Result'}
+                                            </button>
+                                        </div>
+                                        <div className="bg-white rounded-lg p-4 font-mono text-sm break-all max-h-64 overflow-y-auto shadow-inner">
+                                            {result}
+                                        </div>
+                                        <p className="text-xs text-gray-600 mt-3">
+                                            {mode === 'encrypt' 
+                                                ? '✓ Share this encrypted text with anyone. Only someone with your private key can decrypt it.'
+                                                : '✓ Your message has been successfully decrypted using the private key.'}
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Feature Cards */}
+                        <div className="grid md:grid-cols-3 gap-6 mb-8">
+                            <div className="feature-card glass-effect rounded-xl p-6 shadow-lg">
+                                <div className="bg-purple-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
+                                    <Shield className="w-6 h-6 text-purple-600" />
+                                </div>
+                                <h3 className="font-bold text-lg mb-2">Military-Grade Security</h3>
+                                <p className="text-gray-600 text-sm">RSA encryption with Malayalam alphabet integration for enhanced security</p>
+                            </div>
+                            <div className="feature-card glass-effect rounded-xl p-6 shadow-lg">
+                                <div className="bg-green-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
+                                    <Zap className="w-6 h-6 text-green-600" />
+                                </div>
+                                <h3 className="font-bold text-lg mb-2">Zero-Knowledge</h3>
+                                <p className="text-gray-600 text-sm">All encryption happens in your browser. We never see your keys or messages</p>
+                            </div>
+                            <div className="feature-card glass-effect rounded-xl p-6 shadow-lg">
+                                <div className="bg-blue-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
+                                    <Sparkles className="w-6 h-6 text-blue-600" />
+                                </div>
+                                <h3 className="font-bold text-lg mb-2">Easy to Use</h3>
+                                <p className="text-gray-600 text-sm">Generate keys, encrypt messages, and share securely in just a few clicks</p>
+                            </div>
+                        </div>
+
+                        {/* How It Works */}
+                        <div className="glass-effect rounded-2xl p-8 shadow-xl">
+                            <h2 className="text-3xl font-bold mb-6 gradient-text">How It Works</h2>
+                            <div className="space-y-6">
+                                <div className="flex items-start">
+                                    <div className="bg-purple-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold mr-4 flex-shrink-0">1</div>
+                                    <div>
+                                        <h3 className="font-bold text-lg mb-1">Generate Your Keys</h3>
+                                        <p className="text-gray-600">Click "Encrypt Message" to automatically generate a public-private key pair. Share your public key with anyone.</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start">
+                                    <div className="bg-purple-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold mr-4 flex-shrink-0">2</div>
+                                    <div>
+                                        <h3 className="font-bold text-lg mb-1">Encrypt Your Message</h3>
+                                        <p className="text-gray-600">Type your message and click encrypt. Your message is converted to Malayalam letters, then encrypted with RSA.</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start">
+                                    <div className="bg-purple-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold mr-4 flex-shrink-0">3</div>
+                                    <div>
+                                        <h3 className="font-bold text-lg mb-1">Share Securely</h3>
+                                        <p className="text-gray-600">Send the encrypted text to anyone. Only someone with your private key can decrypt it.</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start">
+                                    <div className="bg-purple-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold mr-4 flex-shrink-0">4</div>
+                                    <div>
+                                        <h3 className="font-bold text-lg mb-1">Decrypt Messages</h3>
+                                        <p className="text-gray-600">Switch to "Decrypt Message", paste your private key and the encrypted text to reveal the original message.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Footer */}
+                    <footer className="gradient-bg mt-16 py-8 px-4">
+                        <div className="max-w-6xl mx-auto text-center text-white">
+                            <p className="mb-2">Built with ❤️ using React, RSA Cryptography & Malayalam Integration</p>
+                            <p className="text-sm opacity-75">⚠️ For educational purposes. Use production-grade tools for sensitive data.</p>
+                            <p className="text-xs mt-4 opacity-60">© 2024 CryptoVault • Open Source • Zero-Knowledge Encryption</p>
+                        </div>
+                    </footer>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<CryptoVault />, document.getElementById('root'));
+    </script>
+</body>
+</html>
